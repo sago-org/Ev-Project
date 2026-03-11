@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ChargingSessionManager } from './ChargingSessionManager';
+import type { ChargingSession } from '../models';
 
 describe('ChargingSessionManager', () => {
   let manager: ChargingSessionManager;
@@ -17,6 +18,12 @@ describe('ChargingSessionManager', () => {
 
   describe('startSession', () => {
     it('should create a new active session with valid inputs', async () => {
+      // Mock successful persist
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
+
       const session = await manager.startSession('station-1', 'A1', 'user-123');
 
       expect(session).toBeDefined();
@@ -115,22 +122,43 @@ describe('ChargingSessionManager', () => {
 
   describe('stopSession', () => {
     it('should stop active session and return summary with cost breakdown', async () => {
-      const session = await manager.startSession('ev-1', 'A1', 'user-123');
+      // Mock persist for startSession
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      const session = await manager.startSession('station-1', 'A1', 'user-123');
 
       // Wait a bit for some elapsed time
       await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Mock station details fetch
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: 'Test Station',
+          pricePerKwh: 0.35,
+        }),
+      });
+
+      // Mock persist stopped session
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
 
       const summary = await manager.stopSession(session.sessionId);
 
       expect(summary).toBeDefined();
       expect(summary.sessionId).toBe(session.sessionId);
-      expect(summary.stationName).toBe('Chennai - Anna Salai EV Hub');
+      expect(summary.stationName).toBe('Test Station');
       expect(summary.slotNumber).toBe('A1');
       expect(summary.startTime).toBeInstanceOf(Date);
       expect(summary.endTime).toBeInstanceOf(Date);
       expect(summary.duration).toBeGreaterThanOrEqual(0);
       expect(summary.energyDelivered).toBeGreaterThanOrEqual(0);
-      expect(summary.pricePerKwh).toBe(12.50);
+      expect(summary.pricePerKwh).toBe(0.35);
       expect(summary.subtotal).toBeGreaterThanOrEqual(0);
       expect(summary.taxes).toBeGreaterThanOrEqual(0);
       expect(summary.fees).toBe(1.00);
@@ -150,7 +178,21 @@ describe('ChargingSessionManager', () => {
     });
 
     it('should throw error when trying to stop non-active session', async () => {
-      const session = await manager.startSession('ev-1', 'A1', 'user-123');
+      (global.fetch as any).mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      const session = await manager.startSession('station-1', 'A1', 'user-123');
+
+      // Mock station details
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: 'Test Station',
+          pricePerKwh: 0.35,
+        }),
+      });
 
       // Stop once
       await manager.stopSession(session.sessionId);
@@ -162,17 +204,31 @@ describe('ChargingSessionManager', () => {
     });
 
     it('should calculate correct costs with energy delivered', async () => {
-      const session = await manager.startSession('ev-1', 'A1', 'user-123');
+      (global.fetch as any).mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      const session = await manager.startSession('station-1', 'A1', 'user-123');
 
       // Wait for some energy to be delivered
       await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Mock station details
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: 'Test Station',
+          pricePerKwh: 0.50,
+        }),
+      });
 
       const summary = await manager.stopSession(session.sessionId);
 
       expect(summary.energyDelivered).toBeGreaterThan(0);
       
-      // Verify cost calculation formula (pricePerKwh for ev-1 is 12.50)
-      const expectedSubtotal = Math.round(summary.energyDelivered * 12.50 * 100) / 100;
+      // Verify cost calculation formula
+      const expectedSubtotal = Math.round(summary.energyDelivered * 0.50 * 100) / 100;
       expect(summary.subtotal).toBe(expectedSubtotal);
       
       const expectedTaxes = Math.round(summary.subtotal * 0.10 * 100) / 100;
@@ -185,16 +241,47 @@ describe('ChargingSessionManager', () => {
     });
 
     it('should use default station details if fetch fails', async () => {
-      const session = await manager.startSession('unknown-station', 'A1', 'user-123');
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      const session = await manager.startSession('station-1', 'A1', 'user-123');
+
+      // Mock station details fetch failure
+      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+
+      // Mock persist stopped session
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
 
       const summary = await manager.stopSession(session.sessionId);
 
       expect(summary.stationName).toBe('Unknown Station');
-      expect(summary.pricePerKwh).toBe(12.00);
+      expect(summary.pricePerKwh).toBe(0.35);
     });
 
     it('should continue even if persist stopped session fails', async () => {
-      const session = await manager.startSession('ev-1', 'A1', 'user-123');
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      const session = await manager.startSession('station-1', 'A1', 'user-123');
+
+      // Mock station details
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: 'Test Station',
+          pricePerKwh: 0.35,
+        }),
+      });
+
+      // Mock persist stopped session failure
+      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const summary = await manager.stopSession(session.sessionId);
 

@@ -56,19 +56,13 @@ export class ChargingSessionManager {
     // Start real-time tracking
     this.startSessionTracking(sessionId);
 
-    // TODO: In production, persist session to backend
-    try {
-      await this.persistSession(session);
-    } catch (error) {
-      console.error('Failed to persist session:', error);
-      // Continue anyway - local session is created
-    }
-
+    // For demo: No backend persistence needed
     return session;
   }
 
   /**
    * Get current session status with real-time data
+   * For demo: Returns from local cache only (no API call)
    * @param sessionId The session ID to retrieve
    * @returns Promise resolving to the current session state
    */
@@ -77,35 +71,14 @@ export class ChargingSessionManager {
       throw new Error('Session ID cannot be empty');
     }
 
-    // Check local cache first
+    // Check local cache
     const localSession = this.activeSessions.get(sessionId);
     if (localSession) {
       return { ...localSession };
     }
 
-    // Fetch from backend if not in local cache
-    try {
-      const response = await fetch(`/api/sessions/${sessionId}`);
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Session not found');
-        }
-        throw new Error(`Failed to fetch session: ${response.statusText}`);
-      }
-
-      const session: ChargingSession = await response.json();
-
-      // Normalize dates
-      session.startTime = new Date(session.startTime);
-      if (session.endTime) {
-        session.endTime = new Date(session.endTime);
-      }
-
-      return session;
-    } catch (error) {
-      throw error;
-    }
+    // For demo: Session not found in local cache
+    throw new Error('Session not found');
   }
 
   /**
@@ -173,14 +146,7 @@ export class ChargingSessionManager {
     // Remove from active sessions
     this.activeSessions.delete(sessionId);
 
-    // Persist stopped session
-    try {
-      await this.persistStoppedSession(session, summary);
-    } catch (error) {
-      console.error('Failed to persist stopped session:', error);
-      // Continue anyway - we have the summary
-    }
-
+    // For demo: No backend persistence needed
     return summary;
   }
 
@@ -268,69 +234,42 @@ export class ChargingSessionManager {
   }
 
   /**
-   * Persist session to backend
-   */
-  private async persistSession(session: ChargingSession): Promise<void> {
-    const response = await fetch('/api/sessions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(session),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to persist session: ${response.statusText}`);
-    }
-  }
-
-  /**
-   * Persist stopped session and summary to backend
-   */
-  private async persistStoppedSession(
-    session: ChargingSession,
-    summary: ChargingSessionSummary
-  ): Promise<void> {
-    const response = await fetch(`/api/sessions/${session.sessionId}/stop`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ session, summary }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to persist stopped session: ${response.statusText}`);
-    }
-  }
-
-  /**
    * Fetch station details including pricing
+   * For demo: Uses mock data from StationFinderService
    */
   private async fetchStationDetails(stationId: string): Promise<{
     name: string;
     pricePerKwh: number;
   }> {
-    try {
-      const response = await fetch(`/api/stations/${stationId}`);
+    // Mock station data (matches StationFinderService)
+    const mockStations: Record<string, { name: string; pricePerKwh: number }> = {
+      'ev-1': { name: 'Chennai - Anna Salai EV Hub', pricePerKwh: 12.50 },
+      'ev-2': { name: 'Chennai - T Nagar Charging Point', pricePerKwh: 11.80 },
+      'ev-3': { name: 'Chennai - OMR Tech Park Station', pricePerKwh: 13.00 },
+      'ev-4': { name: 'Chennai - Velachery EV Center', pricePerKwh: 12.00 },
+      'ev-5': { name: 'Chennai - Porur Charging Hub', pricePerKwh: 11.50 },
+      'ev-6': { name: 'Coimbatore - RS Puram EV Center', pricePerKwh: 11.00 },
+      'ev-7': { name: 'Coimbatore - Saibaba Colony Station', pricePerKwh: 10.80 },
+      'ev-8': { name: 'Madurai - Anna Nagar Charging Hub', pricePerKwh: 11.20 },
+      'ev-9': { name: 'Madurai - Bypass Road EV Point', pricePerKwh: 11.50 },
+      'ev-10': { name: 'Tiruchirappalli - Central EV Station', pricePerKwh: 11.80 },
+      'ev-11': { name: 'Salem - Steel Plant Road Charging', pricePerKwh: 11.00 },
+      'ev-12': { name: 'Vellore - Fort Area EV Hub', pricePerKwh: 11.50 },
+      'ev-13': { name: 'Tirunelveli - Junction Charging Point', pricePerKwh: 10.80 },
+      'ev-14': { name: 'Erode - Perundurai Road Station', pricePerKwh: 11.20 },
+      'ev-15': { name: 'Thanjavur - Big Temple EV Center', pricePerKwh: 11.00 },
+    };
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch station details: ${response.statusText}`);
-      }
-
-      const station = await response.json();
-      return {
-        name: station.name,
-        pricePerKwh: station.pricePerKwh,
-      };
-    } catch (error) {
-      // Fallback to default values if fetch fails
-      console.error('Failed to fetch station details, using defaults:', error);
-      return {
-        name: 'Unknown Station',
-        pricePerKwh: 0.35, // Default price
-      };
+    const station = mockStations[stationId];
+    if (station) {
+      return station;
     }
+
+    // Fallback for unknown stations
+    return {
+      name: 'Unknown Station',
+      pricePerKwh: 12.00,
+    };
   }
 
   /**
