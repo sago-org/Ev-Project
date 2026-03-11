@@ -28,15 +28,15 @@ export function StationList({ location, onStationSelect }: StationListProps) {
       setIsFallback(false);
 
       try {
-        // First, try to find EV charging stations
-        const evStations = await stationService.findChargingStations(location, 10);
+        // First, try to find EV charging stations (within 50km radius)
+        const evStations = await stationService.findChargingStations(location, 50);
         
         if (evStations.length > 0) {
           // Found EV stations - display them
           setStations(evStations);
         } else {
           // No EV stations found - fallback to petrol pumps
-          const petrolPumps = await stationService.findPetrolPumps(location, 10);
+          const petrolPumps = await stationService.findPetrolPumps(location, 50);
           setStations(petrolPumps);
           setIsFallback(true);
         }
