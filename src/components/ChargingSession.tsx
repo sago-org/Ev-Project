@@ -95,9 +95,15 @@ export function ChargingSession({
           session.sessionId
         );
         setSession(updatedSession);
+        
+        // Stop polling if session is no longer active
+        if (updatedSession.status !== 'active') {
+          clearInterval(updateInterval);
+        }
       } catch (err) {
+        // Session might have been stopped, clear interval and continue
         console.error('Failed to update session status:', err);
-        // Continue with existing session data
+        clearInterval(updateInterval);
       }
     }, 1000); // Update every second
 

@@ -101,7 +101,7 @@ export class ChargingSessionManager {
       throw new Error(`Cannot stop session with status: ${session.status}`);
     }
 
-    // Stop tracking
+    // Stop tracking FIRST to prevent race conditions
     this.stopSessionTracking(sessionId);
 
     // Update session status
@@ -143,7 +143,7 @@ export class ChargingSessionManager {
       totalAmount,
     };
 
-    // Remove from active sessions
+    // Remove from active sessions LAST to allow any pending getSessionStatus calls to complete
     this.activeSessions.delete(sessionId);
 
     // For demo: No backend persistence needed
