@@ -9,7 +9,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/ev-charging-station-finder/' : '/',
+  base: '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

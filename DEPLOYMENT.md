@@ -87,6 +87,21 @@ Another excellent option with similar features to Vercel.
 
 Free hosting directly from your GitHub repository.
 
+### Important: Base Path Configuration
+
+GitHub Pages requires a base path in the URL. Before deploying to GitHub Pages, you need to update the Vite config:
+
+**Update `vite.config.ts`**:
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  base: '/ev-charging-station-finder/', // Add this line for GitHub Pages
+  // ... rest of config
+});
+```
+
+**Note**: The current configuration has `base: '/'` which is correct for Vercel and Netlify. Only change this if deploying to GitHub Pages.
+
 ### Steps:
 
 1. **Install gh-pages** (already added to package.json):
@@ -97,25 +112,30 @@ npm install
 2. **Update homepage in package.json**:
    - Replace `YOUR_USERNAME` with your GitHub username in the `homepage` field
 
-3. **Deploy**:
+3. **Update vite.config.ts** (for GitHub Pages only):
+   - Change `base: '/'` to `base: '/ev-charging-station-finder/'`
+
+4. **Deploy**:
 ```bash
 # Build and deploy
 npm run deploy
 ```
 
-4. **Enable GitHub Pages**:
+5. **Enable GitHub Pages**:
    - Go to your repository on GitHub
    - Settings → Pages
    - Source: Deploy from branch
    - Branch: `gh-pages` → `/root`
    - Click "Save"
 
-5. **Done!** 🎉
+6. **Done!** 🎉
    - Your app will be live at `https://YOUR_USERNAME.github.io/ev-charging-station-finder`
    - Run `npm run deploy` to update the site
 
 ### Note:
-GitHub Pages requires manual deployment with `npm run deploy` command.
+- GitHub Pages requires manual deployment with `npm run deploy` command
+- The base path must match your repository name
+- If deploying to Vercel/Netlify instead, keep `base: '/'`
 
 ---
 
@@ -162,6 +182,19 @@ After deploying, verify:
 
 ## Troubleshooting
 
+### Issue: 404 errors for CSS and JS files
+**Symptoms**: Console shows "Failed to load resource: 404" for index.css and index.js files
+
+**Solution**: This is a base path issue. Check your deployment platform:
+
+- **Vercel/Netlify**: Use `base: '/'` in `vite.config.ts` (current setting)
+- **GitHub Pages**: Use `base: '/ev-charging-station-finder/'` in `vite.config.ts`
+
+After changing the base path, rebuild:
+```bash
+npm run build
+```
+
 ### Issue: Location detection not working
 **Solution**: Geolocation API requires HTTPS. All deployment platforms provide HTTPS by default.
 
@@ -170,8 +203,8 @@ After deploying, verify:
 
 ### Issue: Routes not working (404 on refresh)
 **Solution**: 
-- **Vercel/Netlify**: Automatically handled
-- **GitHub Pages**: Already configured in `vite.config.ts`
+- **Vercel/Netlify**: Automatically handled with SPA fallback
+- **GitHub Pages**: Create a `404.html` that redirects to `index.html`
 
 ### Issue: Environment variables needed
 **Solution**: Add them in your platform's dashboard:
