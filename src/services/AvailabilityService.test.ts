@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { AvailabilityService } from './AvailabilityService';
-import { SlotStatus } from '../models/ParkingSlot';
 
 // Mock fetch for tests
 const mockFetch = vi.fn();
@@ -19,23 +18,20 @@ describe('AvailabilityService', () => {
   });
 
   describe('getSlotAvailability', () => {
-    it('should fetch slot availability from API', async () => {
-      const mockSlots: SlotStatus[] = [
-        { slotNumber: 'A1', isAvailable: true, lastUpdated: new Date() },
-        { slotNumber: 'A2', isAvailable: false, lastUpdated: new Date() },
-      ];
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockSlots,
-      });
-
+    it('should generate mock slot availability data', async () => {
       const result = await service.getSlotAvailability('station-1');
 
-      expect(result).toHaveLength(2);
-      expect(result[0]?.slotNumber).toBe('A1');
-      expect(result[0]?.isAvailable).toBe(true);
-      expect(mockFetch).toHaveBeenCalledWith('/api/stations/station-1/availability');
+      // Should generate 6-12 slots
+      expect(result.length).toBeGreaterThanOrEqual(6);
+      expect(result.length).toBeLessThanOrEqual(12);
+      
+      // Each slot should have required properties
+      result.forEach(slot => {
+        expect(slot).toHaveProperty('slotNumber');
+        expect(slot).toHaveProperty('isAvailable');
+        expect(slot).toHaveProperty('lastUpdated');
+        expect(slot.lastUpdated).toBeInstanceOf(Date);
+      });
     });
 
     it('should throw error for empty station ID', async () => {
@@ -44,35 +40,22 @@ describe('AvailabilityService', () => {
       );
     });
 
-    it('should throw error when API request fails', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        statusText: 'Not Found',
-      });
+    it('should return cached data when available and valid', async () => {
+      // First call - generates mock data
+      const firstResult = await service.getSlotAvailability('station-1');
 
-      await expect(service.getSlotAvailability('station-1')).rejects.toThrow(
-        'Failed to fetch availability: Not Found'
-      );
+      // Second call - should use cache (same data)
+      const secondResult = await service.getSlotAvailability('station-1');
+
+      expect(firstResult).toEqual(secondResult);
     });
 
-    it('should return cached data when available and valid', async () => {
-      const mockSlots: SlotStatus[] = [
-        { slotNumber: 'A1', isAvailable: true, lastUpdated: new Date() },
-      ];
+    it('should cache data for different stations separately', async () => {
+      const station1Result = await service.getSlotAvailability('station-1');
+      const station2Result = await service.getSlotAvailability('station-2');
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockSlots,
-      });
-
-      // First call - fetches from API
-      await service.getSlotAvailability('station-1');
-
-      // Second call - should use cache
-      const result = await service.getSlotAvailability('station-1');
-
-      expect(result).toHaveLength(1);
-      expect(mockFetch).toHaveBeenCalledTimes(1); // Only called once
+      // Different stations should have different data
+      expect(station1Result).not.toEqual(station2Result);
     });
   });
 
@@ -107,20 +90,21 @@ describe('AvailabilityService', () => {
   });
 
   describe('occupySlot', () => {
-    it('should mark slot as occupied via API', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-      });
+    it('should mark slot as occupied in cache', async () => {
+      // First, get slots to populate cache
+      const slots = await service.getSlotAvailability('station-1');
+      
+      // Find an available slot
+      const availableSlot = slots.find(s => s.isAvailable);
+      expect(availableSlot).toBeDefined();
 
-      await expect(service.occupySlot('station-1', 'A1')).resolves.not.toThrow();
+      // Occupy the slot
+      await expect(service.occupySlot('station-1', availableSlot!.slotNumber)).resolves.not.toThrow();
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        '/api/stations/station-1/slots/A1/occupy',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        })
-      );
+      // Verify the slot is now occupied in cache
+      const updatedSlots = await service.getSlotAvailability('station-1');
+      const occupiedSlot = updatedSlots.find(s => s.slotNumber === availableSlot!.slotNumber);
+      expect(occupiedSlot?.isAvailable).toBe(false);
     });
 
     it('should throw error for empty station ID', async () => {
@@ -136,45 +120,39 @@ describe('AvailabilityService', () => {
     });
 
     it('should throw error when slot is already occupied', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 409,
-        statusText: 'Conflict',
-      });
+      // Get slots and find an available one
+      const slots = await service.getSlotAvailability('station-1');
+      const availableSlot = slots.find(s => s.isAvailable);
+      expect(availableSlot).toBeDefined();
+      
+      // Occupy it
+      await service.occupySlot('station-1', availableSlot!.slotNumber);
 
-      await expect(service.occupySlot('station-1', 'A1')).rejects.toThrow(
+      // Try to occupy the same slot again
+      await expect(service.occupySlot('station-1', availableSlot!.slotNumber)).rejects.toThrow(
         'Slot is already occupied'
-      );
-    });
-
-    it('should throw error when API request fails', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-      });
-
-      await expect(service.occupySlot('station-1', 'A1')).rejects.toThrow(
-        'Failed to occupy slot: Internal Server Error'
       );
     });
   });
 
   describe('releaseSlot', () => {
-    it('should mark slot as available via API', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-      });
+    it('should mark slot as available in cache', async () => {
+      // Get slots and occupy one
+      const slots = await service.getSlotAvailability('station-1');
+      
+      // Find an available slot
+      const availableSlot = slots.find(s => s.isAvailable);
+      expect(availableSlot).toBeDefined();
+      
+      await service.occupySlot('station-1', availableSlot!.slotNumber);
 
-      await expect(service.releaseSlot('station-1', 'A1')).resolves.not.toThrow();
+      // Release the slot
+      await expect(service.releaseSlot('station-1', availableSlot!.slotNumber)).resolves.not.toThrow();
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        '/api/stations/station-1/slots/A1/release',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        })
-      );
+      // Verify the slot is now available in cache
+      const updatedSlots = await service.getSlotAvailability('station-1');
+      const releasedSlot = updatedSlots.find(s => s.slotNumber === availableSlot!.slotNumber);
+      expect(releasedSlot?.isAvailable).toBe(true);
     });
 
     it('should throw error for empty station ID', async () => {
@@ -188,43 +166,32 @@ describe('AvailabilityService', () => {
         'Slot number cannot be empty'
       );
     });
-
-    it('should throw error when API request fails', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        statusText: 'Internal Server Error',
-      });
-
-      await expect(service.releaseSlot('station-1', 'A1')).rejects.toThrow(
-        'Failed to release slot: Internal Server Error'
-      );
-    });
   });
 
   describe('real-time updates', () => {
     it('should handle cache updates when slot status changes', async () => {
-      const mockSlots: SlotStatus[] = [
-        { slotNumber: 'A1', isAvailable: true, lastUpdated: new Date() },
-        { slotNumber: 'A2', isAvailable: true, lastUpdated: new Date() },
-      ];
+      // Get initial slots
+      const slots = await service.getSlotAvailability('station-1');
+      
+      // Find an available slot
+      const availableSlot = slots.find(s => s.isAvailable);
+      expect(availableSlot).toBeDefined();
 
-      // Setup initial cache
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockSlots,
-      });
+      // Occupy slot
+      await service.occupySlot('station-1', availableSlot!.slotNumber);
 
-      await service.getSlotAvailability('station-1');
+      // Verify cache was updated
+      const updatedSlots = await service.getSlotAvailability('station-1');
+      const occupiedSlot = updatedSlots.find(s => s.slotNumber === availableSlot!.slotNumber);
+      expect(occupiedSlot?.isAvailable).toBe(false);
 
-      // Mock occupy slot
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-      });
+      // Release slot
+      await service.releaseSlot('station-1', availableSlot!.slotNumber);
 
-      await service.occupySlot('station-1', 'A1');
-
-      // Verify cache was updated (this is internal, so we test indirectly)
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+      // Verify cache was updated again
+      const finalSlots = await service.getSlotAvailability('station-1');
+      const releasedSlot = finalSlots.find(s => s.slotNumber === availableSlot!.slotNumber);
+      expect(releasedSlot?.isAvailable).toBe(true);
     });
   });
 

@@ -17,8 +17,6 @@ export class AvailabilityService {
   private subscribers: Map<string, Set<(slots: SlotStatus[]) => void>> = new Map();
   private slotCache: Map<string, SlotStatus[]> = new Map();
   private readonly POLLING_INTERVAL = 5000; // 5 seconds as per requirement 6.4
-  private readonly WS_RECONNECT_DELAY = 3000;
-  private readonly WS_BASE_URL = 'ws://localhost:8080/availability'; // Configurable endpoint
 
   /**
    * Get current slot availability for a station
@@ -36,34 +34,49 @@ export class AvailabilityService {
       return cached;
     }
 
-    // Fetch from API
+    // For demo: Generate mock slot data instead of API call
     try {
-      const response = await fetch(`/api/stations/${stationId}/availability`);
+      const slots = this.generateMockSlots(stationId);
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch availability: ${response.statusText}`);
-      }
-
-      const slots: SlotStatus[] = await response.json();
-      
-      // Validate and normalize the data
-      const validatedSlots = slots.map(slot => ({
-        ...slot,
-        lastUpdated: new Date(slot.lastUpdated),
-      }));
-
       // Update cache
-      this.slotCache.set(stationId, validatedSlots);
+      this.slotCache.set(stationId, slots);
 
-      return validatedSlots;
+      return slots;
     } catch (error) {
-      // If fetch fails and we have cached data, return it with a warning
+      // If generation fails and we have cached data, return it with a warning
       if (cached) {
-        console.warn('Using stale cached data due to fetch error:', error);
+        console.warn('Using stale cached data due to error:', error);
         return cached;
       }
       throw error;
     }
+  }
+
+  /**
+   * Generate mock slot data for demo purposes
+   * In production, this would be replaced with actual API calls
+   */
+  private generateMockSlots(_stationId: string): SlotStatus[] {
+    // Generate 6-12 slots per station
+    const slotCount = Math.floor(Math.random() * 7) + 6; // 6-12 slots
+    const slots: SlotStatus[] = [];
+    
+    for (let i = 0; i < slotCount; i++) {
+      const row = String.fromCharCode(65 + Math.floor(i / 4)); // A, B, C, etc.
+      const col = (i % 4) + 1;
+      const slotNumber = `${row}${col}`;
+      
+      // Randomly make some slots occupied (30% chance)
+      const isAvailable = Math.random() > 0.3;
+      
+      slots.push({
+        slotNumber,
+        isAvailable,
+        lastUpdated: new Date(),
+      });
+    }
+    
+    return slots;
   }
 
   /**
@@ -106,6 +119,7 @@ export class AvailabilityService {
 
   /**
    * Mark a slot as occupied
+   * For demo: Updates local cache only (no API call)
    * @param stationId The station ID
    * @param slotNumber The slot number to occupy
    */
@@ -118,30 +132,22 @@ export class AvailabilityService {
       throw new Error('Slot number cannot be empty');
     }
 
-    try {
-      const response = await fetch(`/api/stations/${stationId}/slots/${slotNumber}/occupy`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error('Slot is already occupied');
-        }
-        throw new Error(`Failed to occupy slot: ${response.statusText}`);
+    // For demo: Update local cache directly
+    const cached = this.slotCache.get(stationId);
+    if (cached) {
+      const slot = cached.find(s => s.slotNumber === slotNumber);
+      if (slot && !slot.isAvailable) {
+        throw new Error('Slot is already occupied');
       }
-
-      // Update local cache
-      await this.updateSlotInCache(stationId, slotNumber, false);
-    } catch (error) {
-      throw error;
     }
+
+    // Update local cache
+    await this.updateSlotInCache(stationId, slotNumber, false);
   }
 
   /**
    * Mark a slot as available
+   * For demo: Updates local cache only (no API call)
    * @param stationId The station ID
    * @param slotNumber The slot number to release
    */
@@ -154,79 +160,23 @@ export class AvailabilityService {
       throw new Error('Slot number cannot be empty');
     }
 
-    try {
-      const response = await fetch(`/api/stations/${stationId}/slots/${slotNumber}/release`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to release slot: ${response.statusText}`);
-      }
-
-      // Update local cache
-      await this.updateSlotInCache(stationId, slotNumber, true);
-    } catch (error) {
-      throw error;
-    }
+    // For demo: Update local cache directly
+    await this.updateSlotInCache(stationId, slotNumber, true);
   }
 
   /**
    * Connect to WebSocket for real-time updates
    * Falls back to polling if connection fails
+   * For demo: Skip WebSocket and use mock polling directly
    */
   private connectWebSocket(stationId: string): void {
-    try {
-      const ws = new WebSocket(`${this.WS_BASE_URL}/${stationId}`);
-
-      ws.onopen = () => {
-        console.log(`WebSocket connected for station ${stationId}`);
-        this.wsConnections.set(stationId, ws);
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const slots: SlotStatus[] = JSON.parse(event.data);
-          const validatedSlots = slots.map(slot => ({
-            ...slot,
-            lastUpdated: new Date(slot.lastUpdated),
-          }));
-          
-          this.slotCache.set(stationId, validatedSlots);
-          this.notifySubscribers(stationId, validatedSlots);
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.fallbackToPolling(stationId);
-      };
-
-      ws.onclose = () => {
-        console.log(`WebSocket closed for station ${stationId}`);
-        this.wsConnections.delete(stationId);
-        
-        // Attempt reconnection if there are still subscribers
-        if (this.subscribers.has(stationId) && this.subscribers.get(stationId)!.size > 0) {
-          setTimeout(() => {
-            if (this.subscribers.has(stationId) && this.subscribers.get(stationId)!.size > 0) {
-              this.connectWebSocket(stationId);
-            }
-          }, this.WS_RECONNECT_DELAY);
-        }
-      };
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
-      this.fallbackToPolling(stationId);
-    }
+    // For demo: Skip WebSocket connection and use mock polling directly
+    this.fallbackToPolling(stationId);
   }
 
   /**
    * Fall back to polling when WebSocket is unavailable
+   * For demo: Uses mock data simulation with periodic updates
    */
   private fallbackToPolling(stationId: string): void {
     // Don't start polling if already polling
@@ -234,14 +184,28 @@ export class AvailabilityService {
       return;
     }
 
-    console.log(`Falling back to polling for station ${stationId}`);
-
     const poll = async () => {
       try {
+        // Get current slots (from cache or generate new)
         const slots = await this.getSlotAvailability(stationId);
-        this.notifySubscribers(stationId, slots);
+        
+        // Simulate random slot changes (10% chance per slot)
+        const updatedSlots = slots.map(slot => {
+          if (Math.random() < 0.1) {
+            return {
+              ...slot,
+              isAvailable: !slot.isAvailable,
+              lastUpdated: new Date(),
+            };
+          }
+          return slot;
+        });
+        
+        // Update cache and notify
+        this.slotCache.set(stationId, updatedSlots);
+        this.notifySubscribers(stationId, updatedSlots);
       } catch (error) {
-        console.error('Polling error:', error);
+        // Silently handle errors in demo mode
       }
     };
 
