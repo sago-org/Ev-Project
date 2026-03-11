@@ -1,0 +1,407 @@
+.station-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Back button */
+.back-button {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+.back-button:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Station header */
+.station-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.station-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.station-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.fallback-badge {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Station info section */
+.station-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.info-item .icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.info-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Parking slots section */
+.parking-slots-section {
+  margin-bottom: 2rem;
+}
+
+.slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.slots-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.slots-summary {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.summary-item.available {
+  color: #059669;
+}
+
+.summary-item.occupied {
+  color: #dc2626;
+}
+
+.summary-indicator {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.available-indicator {
+  background-color: #10b981;
+}
+
+.occupied-indicator {
+  background-color: #ef4444;
+}
+
+.selected-indicator {
+  background-color: #3b82f6;
+}
+
+/* Slots legend */
+.slots-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.legend-indicator {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+/* Parking slots grid */
+.parking-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.parking-slot {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border: 2px solid;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  background-color: white;
+}
+
+.parking-slot.available {
+  border-color: #10b981;
+  color: #059669;
+}
+
+.parking-slot.available:hover {
+  background-color: #d1fae5;
+  transform: scale(1.05);
+}
+
+.parking-slot.available:active {
+  transform: scale(0.98);
+}
+
+.parking-slot.occupied {
+  border-color: #ef4444;
+  color: #dc2626;
+  background-color: #fee2e2;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.parking-slot.selected {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+  color: #2563eb;
+  border-width: 3px;
+}
+
+.parking-slot:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.slot-number {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.slot-status {
+  font-size: 0.875rem;
+}
+
+.empty-slots {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+/* Station footer */
+.station-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.selection-info .icon {
+  font-size: 1.25rem;
+}
+
+.proceed-button {
+  padding: 0.75rem 2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: auto;
+}
+
+.proceed-button:hover {
+  background-color: #1d4ed8;
+}
+
+.proceed-button:active {
+  background-color: #1e40af;
+}
+
+.proceed-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* Loading and error states */
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  color: #dc2626;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.error-state button {
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.error-state button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .station-detail {
+    padding: 1rem;
+  }
+
+  .station-name {
+    font-size: 1.5rem;
+  }
+
+  .station-info {
+    grid-template-columns: 1fr;
+  }
+
+  .parking-slots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .slots-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .station-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .proceed-button {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .selection-info {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .parking-slots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  }
+
+  .slot-number {
+    font-size: 0.875rem;
+  }
+}

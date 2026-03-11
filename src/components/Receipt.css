@@ -1,0 +1,280 @@
+.receipt {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.receipt-loading,
+.receipt-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-icon {
+  font-size: 64px;
+  color: #f44336;
+  margin-bottom: 20px;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: #4CAF50;
+  margin-bottom: 10px;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.receipt-header h1 {
+  margin: 10px 0;
+  color: #333;
+  font-size: 28px;
+}
+
+.receipt-subtitle {
+  color: #666;
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.receipt-preview {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.receipt-preview h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 20px;
+  text-align: center;
+}
+
+.receipt-preview h3 {
+  margin: 15px 0 10px 0;
+  color: #555;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.preview-section {
+  margin-bottom: 20px;
+}
+
+.preview-section:last-child {
+  margin-bottom: 0;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.preview-row:last-child {
+  border-bottom: none;
+}
+
+.preview-row.total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid #333;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.preview-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.preview-value {
+  color: #333;
+  font-weight: 600;
+  text-align: right;
+}
+
+.receipt-actions {
+  margin-bottom: 30px;
+}
+
+.download-section {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.download-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: 600;
+}
+
+.download-button:hover {
+  background: #45a049;
+}
+
+.download-button:active {
+  transform: scale(0.98);
+}
+
+.email-section {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.email-section h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.email-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.email-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.email-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.email-input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.email-button {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.email-button:hover:not(:disabled) {
+  background: #1976D2;
+}
+
+.email-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.email-success {
+  color: #4CAF50;
+  padding: 10px;
+  background: #e8f5e9;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.email-error {
+  color: #f44336;
+  padding: 10px;
+  background: #ffebee;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.receipt-footer {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.complete-button {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: 600;
+}
+
+.complete-button:hover {
+  background: #555;
+}
+
+.complete-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .receipt {
+    padding: 15px;
+  }
+
+  .email-form {
+    flex-direction: column;
+  }
+
+  .email-button {
+    width: 100%;
+  }
+
+  .preview-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .preview-value {
+    text-align: left;
+  }
+}

@@ -1,0 +1,650 @@
+/* Payment Component Styles */
+
+.payment {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Back Button */
+.payment .back-button {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.2s;
+  align-self: flex-start;
+}
+
+.payment .back-button:hover {
+  color: #0052a3;
+  text-decoration: underline;
+}
+
+/* Header */
+.payment-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.payment-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.payment-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Payment Content */
+.payment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex: 1;
+}
+
+/* Payment Amount Display - Large and Readable (Requirement 11.1, 11.3) */
+.payment-amount-display {
+  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.payment-amount-display .amount-label {
+  display: block;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-amount-display .amount-value {
+  display: block;
+  font-size: 3rem;
+  color: white;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.2;
+}
+
+/* QR Code Container - Prominent Display (Requirement 10.3) */
+.qr-code-container {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qr-code-image {
+  width: 300px;
+  height: 300px;
+  border: 4px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 1rem;
+  background: white;
+}
+
+.qr-code-hint {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Payment Details */
+.payment-details {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  gap: 1rem;
+}
+
+.detail-label {
+  color: #666;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* Error Message */
+.error-message {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #856404;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Footer */
+.payment-footer {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Verify Button */
+.verify-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  background-color: #28a745;
+  color: white;
+  width: 100%;
+}
+
+.verify-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.verify-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.verify-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Simulate Failure Button (for testing) */
+.simulate-failure-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  background-color: white;
+  color: #dc3545;
+  width: 100%;
+}
+
+.simulate-failure-button:hover:not(:disabled) {
+  background-color: #dc3545;
+  color: white;
+}
+
+.simulate-failure-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Loading State */
+.payment-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  min-height: 400px;
+  text-align: center;
+}
+
+.payment-loading p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #0066cc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Verifying Screen */
+.payment-verifying {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  min-height: 400px;
+  text-align: center;
+}
+
+.payment-verifying h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.payment-verifying p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+.verifying-amount {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 250px;
+}
+
+.verifying-amount .amount-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.verifying-amount .amount-value {
+  font-size: 2rem;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+/* Success Screen */
+.payment-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  min-height: 400px;
+  text-align: center;
+}
+
+.success-icon {
+  width: 5rem;
+  height: 5rem;
+  background: #28a745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  animation: successPop 0.5s ease-out;
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.payment-success h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #28a745;
+  margin: 0;
+}
+
+.payment-success > p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.success-amount {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.success-amount .amount-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.success-amount .amount-value {
+  font-size: 2.5rem;
+  color: white;
+  font-weight: 700;
+}
+
+.success-details {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.success-message {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 1rem 0 0 0;
+  font-style: italic;
+}
+
+/* Error Screen */
+.payment-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  min-height: 400px;
+  text-align: center;
+}
+
+.error-icon {
+  width: 5rem;
+  height: 5rem;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  animation: errorShake 0.5s ease-out;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+.payment-error h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #dc3545;
+  margin: 0;
+}
+
+.error-description {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  max-width: 400px;
+}
+
+.error-amount {
+  background: #f8f9fa;
+  border: 2px solid #dc3545;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 300px;
+}
+
+.error-amount .amount-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.error-amount .amount-value {
+  font-size: 2rem;
+  color: #dc3545;
+  font-weight: 700;
+}
+
+.error-details {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.error-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1rem;
+}
+
+/* Retry Button */
+.retry-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  background-color: #0066cc;
+  color: white;
+  width: 100%;
+}
+
+.retry-button:hover:not(:disabled) {
+  background-color: #0052a3;
+}
+
+.retry-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.retry-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Secondary Back Button */
+.back-button-secondary {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid #0066cc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  background-color: white;
+  color: #0066cc;
+  width: 100%;
+}
+
+.back-button-secondary:hover:not(:disabled) {
+  background-color: #f0f7ff;
+}
+
+.back-button-secondary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payment {
+    padding: 1rem;
+  }
+
+  .payment-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .payment-amount-display .amount-value {
+    font-size: 2.5rem;
+  }
+
+  .qr-code-image {
+    width: 250px;
+    height: 250px;
+  }
+
+  .success-icon,
+  .error-icon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2.5rem;
+  }
+
+  .payment-success h2,
+  .payment-error h2 {
+    font-size: 1.75rem;
+  }
+
+  .success-amount .amount-value {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment {
+    padding: 0.75rem;
+  }
+
+  .payment-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .payment-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .payment-amount-display {
+    padding: 1.5rem;
+  }
+
+  .payment-amount-display .amount-value {
+    font-size: 2rem;
+  }
+
+  .qr-code-container {
+    padding: 1.5rem;
+  }
+
+  .qr-code-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .payment-details {
+    padding: 1rem;
+  }
+
+  .detail-row {
+    font-size: 0.85rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .detail-value {
+    text-align: left;
+  }
+
+  .success-icon,
+  .error-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 2rem;
+  }
+
+  .payment-success h2,
+  .payment-error h2 {
+    font-size: 1.5rem;
+  }
+
+  .success-amount,
+  .error-amount {
+    min-width: unset;
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .success-amount .amount-value {
+    font-size: 1.75rem;
+  }
+
+  .error-amount .amount-value {
+    font-size: 1.75rem;
+  }
+
+  .verify-button,
+  .retry-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
