@@ -4,24 +4,32 @@ import type { ChargingSession, ChargingSessionSummary } from '../models';
  * Service for managing charging session lifecycle
  * Handles session creation, tracking, termination, and cost calculation
  * Singleton pattern to ensure session persistence across component re-renders
+ * Uses sessionStorage to persist data across page navigation
  */
 export class ChargingSessionManager {
   private static instance: ChargingSessionManager | null = null;
   private activeSessions: Map<string, ChargingSession> = new Map();
   private sessionTimers: Map<string, number> = new Map();
   private readonly UPDATE_INTERVAL = 1000; // Update every second
+  private readonly STORAGE_KEY = 'ev-charging-sessions';
 
   /**
    * Private constructor to enforce singleton pattern
+   * Loads existing sessions from sessionStorage
    */
-  private constructor() {}
+  private constructor() {
+    this.loadSessionsFromStorage();
+  }
 
   /**
    * Get the singleton instance of ChargingSessionManager
+   * Restores active sessions and resumes tracking
    */
   public static getInstance(): ChargingSessionManager {
     if (!ChargingSessionManager.instance) {
       ChargingSessionManager.instance = new ChargingSessionManager();
+      // Resume tracking for any active sessions
+      ChargingSessionManager.instance.resumeActiveSessionTracking();
     }
     return ChargingSessionManager.instance;
   }
@@ -79,6 +87,9 @@ export class ChargingSessionManager {
 
     // Store session
     this.activeSessions.set(sessionId, session);
+
+    // Persist to storage
+    this.saveSessionsToStorage();
 
     // Start real-time tracking
     this.startSessionTracking(sessionId);
@@ -173,6 +184,9 @@ export class ChargingSessionManager {
     // Remove from active sessions LAST to allow any pending getSessionStatus calls to complete
     this.activeSessions.delete(sessionId);
 
+    // Persist to storage
+    this.saveSessionsToStorage();
+
     // For demo: No backend persistence needed
     return summary;
   }
@@ -237,6 +251,9 @@ export class ChargingSessionManager {
       if (session.realTimeUpdates.length > 100) {
         session.realTimeUpdates = session.realTimeUpdates.slice(-100);
       }
+
+      // Persist to storage every update
+      this.saveSessionsToStorage();
     }, this.UPDATE_INTERVAL);
 
     this.sessionTimers.set(sessionId, intervalId as unknown as number);
@@ -311,5 +328,74 @@ export class ChargingSessionManager {
     // Clear all data
     this.activeSessions.clear();
     this.sessionTimers.clear();
+
+    // Clear storage
+    this.clearStorage();
+  }
+
+  /**
+   * Load sessions from sessionStorage
+   */
+  private loadSessionsFromStorage(): void {
+    try {
+      const stored = sessionStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const sessions = JSON.parse(stored);
+        // Convert stored objects back to Map with Date objects
+        Object.entries(sessions).forEach(([sessionId, session]: [string, any]) => {
+          this.activeSessions.set(sessionId, {
+            ...session,
+            startTime: new Date(session.startTime),
+            endTime: session.endTime ? new Date(session.endTime) : undefined,
+            realTimeUpdates: session.realTimeUpdates?.map((update: any) => ({
+              ...update,
+              timestamp: new Date(update.timestamp),
+            })) || [],
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load sessions from storage:', error);
+      // Continue with empty sessions if storage is corrupted
+    }
+  }
+
+  /**
+   * Save sessions to sessionStorage
+   */
+  private saveSessionsToStorage(): void {
+    try {
+      const sessions: Record<string, ChargingSession> = {};
+      this.activeSessions.forEach((session, sessionId) => {
+        sessions[sessionId] = session;
+      });
+      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(sessions));
+    } catch (error) {
+      console.error('Failed to save sessions to storage:', error);
+      // Continue even if storage fails
+    }
+  }
+
+  /**
+   * Resume tracking for active sessions after page reload
+   */
+  private resumeActiveSessionTracking(): void {
+    this.activeSessions.forEach((session, sessionId) => {
+      if (session.status === 'active') {
+        // Resume tracking for active sessions
+        this.startSessionTracking(sessionId);
+      }
+    });
+  }
+
+  /**
+   * Clear all data from storage
+   */
+  private clearStorage(): void {
+    try {
+      sessionStorage.removeItem(this.STORAGE_KEY);
+    } catch (error) {
+      console.error('Failed to clear storage:', error);
+    }
   }
 }
