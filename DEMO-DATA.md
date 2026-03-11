@@ -1,106 +1,189 @@
-# Demo Data Information
+# Demo Data - Tamil Nadu, India
 
-## Station Locations
+## EV Charging Stations (15 Locations)
 
-The app currently uses **mock data** for demonstration purposes. Here are the locations where you'll find stations:
+### Chennai (5 stations)
+| Station Name | Address | Coordinates | Price/kWh |
+|--------------|---------|-------------|-----------|
+| Tata Power EZ Charge | Anna Salai, Mount Road | 13.0569, 80.2497 | ₹12.50 |
+| Ather Grid | Pondy Bazaar, T Nagar | 13.0418, 80.2341 | ₹13.00 |
+| Statiq EV Charging | OMR, Thoraipakkam | 12.9391, 80.2304 | ₹11.80 |
+| ChargeZone | Velachery Main Road | 12.9750, 80.2170 | ₹12.00 |
+| Tata Power | Mount Poonamallee Road, Porur | 13.0358, 80.1557 | ₹12.20 |
 
-### EV Charging Stations
+### Coimbatore (2 stations)
+| Station Name | Address | Coordinates | Price/kWh |
+|--------------|---------|-------------|-----------|
+| Ather Grid | Diwan Bahadur Road, RS Puram | 11.0015, 76.9604 | ₹11.50 |
+| Statiq | Avinashi Road, Saibaba Colony | 11.0240, 76.9630 | ₹11.80 |
 
-| City | Location | Coordinates |
-|------|----------|-------------|
-| **San Francisco, CA** | ChargePoint Station | 37.7749, -122.4194 |
-| **San Francisco, CA** | Tesla Supercharger | 37.7849, -122.4094 |
-| **New York, NY** | EVgo Fast Charging | 40.7128, -74.0060 |
-| **Los Angeles, CA** | Electrify America | 34.0522, -118.2437 |
-| **London, UK** | BP Pulse Charging | 51.5074, -0.1278 |
-| **Chennai, India** | Tata Power Charging | 13.0827, 80.2707 |
-| **Mumbai, India** | Ather Grid Charging | 19.0760, 72.8777 |
-| **Bangalore, India** | Statiq EV Charging | 12.9716, 77.5946 |
+### Madurai (2 stations)
+| Station Name | Address | Coordinates | Price/kWh |
+|--------------|---------|-------------|-----------|
+| Tata Power | Anna Nagar | 9.9252, 78.1198 | ₹11.00 |
+| ChargeZone | Madurai Bypass Road | 9.9195, 78.1354 | ₹11.50 |
 
-### Petrol Pumps (Fallback)
-
-| City | Location | Coordinates |
-|------|----------|-------------|
-| **San Francisco, CA** | Shell Gas Station | 37.7649, -122.4294 |
-| **San Francisco, CA** | Chevron Station | 37.7549, -122.4394 |
-| **New York, NY** | Exxon Station | 40.7228, -74.0160 |
-| **Los Angeles, CA** | Mobil Gas Station | 34.0622, -118.2537 |
-| **Chennai, India** | Indian Oil Petrol Pump | 13.0727, 80.2607 |
-| **Mumbai, India** | Bharat Petroleum | 19.0660, 72.8677 |
-| **Bangalore, India** | HP Petrol Pump | 12.9616, 77.5846 |
-
----
-
-## Search Radius
-
-- **Current radius**: 50 km (31 miles)
-- Stations within this radius will be displayed
-- If no EV stations found, petrol pumps are shown as fallback
+### Other Cities (6 stations)
+| City | Station Name | Coordinates | Price/kWh |
+|------|--------------|-------------|-----------|
+| **Tiruchirappalli** | Ather Grid - Thillai Nagar | 10.8155, 78.6869 | ₹11.20 |
+| **Salem** | Statiq - Cherry Road | 11.6643, 78.1460 | ₹11.00 |
+| **Vellore** | Tata Power - Katpadi | 12.9698, 79.1325 | ₹11.50 |
+| **Tirunelveli** | ChargeZone - Palayamkottai | 8.7289, 77.7085 | ₹10.80 |
+| **Erode** | Ather Grid - Perundurai Road | 11.3410, 77.7172 | ₹11.00 |
+| **Thanjavur** | Statiq - Medical College Road | 10.7870, 79.1378 | ₹11.00 |
 
 ---
 
-## Testing the App
+## Petrol Pumps (12 Locations)
 
-### Option 1: Use Your Actual Location
+### Chennai (4 pumps)
+| Pump Name | Address | Coordinates |
+|-----------|---------|-------------|
+| Indian Oil | Anna Salai | 13.0525, 80.2511 |
+| Bharat Petroleum | OMR | 12.9450, 80.2350 |
+| HP Petrol Pump | Porur | 13.0380, 80.1520 |
+| Indian Oil | Velachery Main Road | 12.9800, 80.2200 |
+
+### Other Cities (8 pumps)
+| City | Pump Name | Coordinates |
+|------|-----------|-------------|
+| **Coimbatore** | Bharat Petroleum - Avinashi Road | 11.0270, 76.9670 |
+| **Coimbatore** | HP Petrol Pump - Gandhipuram | 11.0168, 76.9558 |
+| **Madurai** | Indian Oil - Bypass Road | 9.9220, 78.1380 |
+| **Madurai** | Bharat Petroleum - Anna Nagar | 9.9280, 78.1220 |
+| **Tiruchirappalli** | HP Petrol Pump - Thillai Nagar | 10.8180, 78.6900 |
+| **Salem** | Indian Oil - Cherry Road | 11.6670, 78.1490 |
+| **Vellore** | Bharat Petroleum - Katpadi | 12.9720, 79.1350 |
+| **Tirunelveli** | HP Petrol Pump - Palayamkottai | 8.7310, 77.7110 |
+
+---
+
+## Quick Test Coordinates
+
+Copy and paste these into the manual entry form:
+
+### Major Cities
+- **Chennai (Anna Salai)**: `13.0569, 80.2497`
+- **Chennai (T Nagar)**: `13.0418, 80.2341`
+- **Chennai (OMR)**: `12.9391, 80.2304`
+- **Coimbatore**: `11.0015, 76.9604`
+- **Madurai**: `9.9252, 78.1198`
+- **Tiruchirappalli**: `10.8155, 78.6869`
+- **Salem**: `11.6643, 78.1460`
+- **Vellore**: `12.9698, 79.1325`
+
+---
+
+## Search Settings
+
+- **Search Radius**: 50 km
+- **Currency**: Indian Rupees (₹)
+- **Price Range**: ₹10.80 - ₹13.00 per kWh
+- **Operating Hours**: Mix of 24/7 and timed stations
+
+---
+
+## Coverage Map
+
+```
+Tamil Nadu Coverage:
+┌─────────────────────────────┐
+│  Vellore (1 EV, 1 Petrol)  │
+│                             │
+│  Salem (1 EV, 1 Petrol)     │
+│                             │
+│  Erode (1 EV)               │
+│                             │
+│  Coimbatore (2 EV, 2 Petrol)│
+│                             │
+│  Tiruchirappalli (1 EV, 1 P)│
+│                             │
+│  Thanjavur (1 EV)           │
+│                             │
+│  Chennai (5 EV, 4 Petrol)   │
+│  ├─ Anna Salai              │
+│  ├─ T Nagar                 │
+│  ├─ OMR                     │
+│  ├─ Velachery               │
+│  └─ Porur                   │
+│                             │
+│  Madurai (2 EV, 2 Petrol)   │
+│                             │
+│  Tirunelveli (1 EV, 1 Petrol)│
+└─────────────────────────────┘
+```
+
+---
+
+## How to Test
+
+### Option 1: Use Your Actual Location (If in Tamil Nadu)
 1. Allow location access when prompted
-2. If you're near any of the cities above, you'll see stations
-3. If not, you'll see "No stations found" or petrol pump fallback
+2. If you're in Tamil Nadu, you'll see nearby stations
+3. Stations within 50km will be displayed
 
-### Option 2: Use Manual Location Entry
-1. Deny location access or click "Enter location manually"
+### Option 2: Manual Entry (Recommended)
+1. Click "Enter location manually" on landing page
 2. Enter coordinates from the table above
-3. Example: `37.7749, -122.4194` (San Francisco)
+3. Example: `13.0569, 80.2497` (Chennai Anna Salai)
 
-### Option 3: Test with Browser DevTools
+### Option 3: Browser DevTools
 1. Open Chrome DevTools (F12)
 2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 3. Type "sensors" and select "Show Sensors"
-4. Choose a location from the dropdown or enter custom coordinates
+4. Enter custom coordinates from the table
 5. Reload the page
 
 ---
 
-## Why Am I Not Seeing Stations?
+## Station Features
 
-### Possible Reasons:
+### EV Charging Stations
+- ✅ Real-time slot availability
+- ✅ Price per kWh in Indian Rupees
+- ✅ Operating hours (24/7 or timed)
+- ✅ Multiple charging slots
+- ✅ Major providers: Tata Power, Ather Grid, Statiq, ChargeZone
 
-1. **You're too far from demo locations**
-   - The mock data only has stations in specific cities
-   - Try using manual entry with coordinates from the table above
+### Petrol Pumps (Fallback)
+- ✅ Shown when no EV stations nearby
+- ✅ Major brands: Indian Oil, Bharat Petroleum, HP
+- ✅ 24/7 availability
+- ✅ Multiple fuel pumps
 
-2. **Location permission denied**
-   - The app needs your location to search for nearby stations
-   - Click "Enter location manually" and use demo coordinates
+---
 
-3. **Search radius too small**
-   - Current radius is 50km
-   - If you're more than 50km from any demo location, no stations will show
+## Pricing Information
+
+| Provider | Average Price/kWh |
+|----------|-------------------|
+| Tata Power | ₹11.50 - ₹12.50 |
+| Ather Grid | ₹11.50 - ₹13.00 |
+| Statiq | ₹11.00 - ₹11.80 |
+| ChargeZone | ₹10.80 - ₹12.00 |
 
 ---
 
 ## For Production Use
 
-To use real station data, you need to:
+To integrate real charging station data:
 
-1. **Get an API key** from a charging station provider:
-   - [Open Charge Map](https://openchargemap.org/site/develop/api)
-   - [PlugShare API](https://www.plugshare.com/)
-   - [ChargePoint API](https://www.chargepoint.com/developers/)
+1. **Tamil Nadu EV Infrastructure APIs**:
+   - TNEB (Tamil Nadu Electricity Board) EV Portal
+   - Open Charge Map India
+   - PlugShare India
 
 2. **Update StationFinderService.ts**:
-   - Replace `fetchMockStations()` with actual API calls
-   - Add API key to environment variables
-   - Parse API response to match Station interface
-
-3. **Example API integration**:
 ```typescript
-async findChargingStations(location: Coordinates, radiusKm: number = 10): Promise<Station[]> {
+async findChargingStations(location: Coordinates, radiusKm: number = 50): Promise<Station[]> {
   const response = await fetch(
     `https://api.openchargemap.io/v3/poi/?` +
     `latitude=${location.latitude}&` +
     `longitude=${location.longitude}&` +
     `distance=${radiusKm}&` +
     `distanceunit=km&` +
+    `countrycode=IN&` +
     `key=${process.env.VITE_CHARGING_API_KEY}`
   );
   
@@ -111,37 +194,13 @@ async findChargingStations(location: Coordinates, radiusKm: number = 10): Promis
 
 ---
 
-## Quick Test Coordinates
-
-Copy and paste these into the manual entry form:
-
-- **San Francisco**: `37.7749, -122.4194`
-- **New York**: `40.7128, -74.0060`
-- **Los Angeles**: `34.0522, -118.2437`
-- **London**: `51.5074, -0.1278`
-- **Chennai**: `13.0827, 80.2707`
-- **Mumbai**: `19.0760, 72.8777`
-- **Bangalore**: `12.9716, 77.5946`
-
----
-
-## Need Help?
-
-If you're still not seeing stations:
-
-1. Check browser console for errors (F12)
-2. Verify location permissions are granted
-3. Try manual entry with coordinates above
-4. Clear browser cache and reload
-5. Check that you're using HTTPS (required for geolocation)
-
----
-
 ## Summary
 
-✅ **Mock data** includes 8 EV stations and 7 petrol pumps  
-✅ **Search radius** is 50km  
-✅ **Locations** span USA, UK, and India  
-✅ **Manual entry** available if location access denied  
+✅ **15 EV Charging Stations** across Tamil Nadu  
+✅ **12 Petrol Pumps** as fallback  
+✅ **9 Cities** covered  
+✅ **50km Search Radius**  
+✅ **Realistic pricing** in Indian Rupees  
+✅ **Operating hours** included  
 
-For production, integrate with a real charging station API!
+Perfect for testing and demonstrating the EV Charging Station Finder in Tamil Nadu! 🚗⚡
