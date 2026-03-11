@@ -3,17 +3,23 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { ChargingSession } from './ChargingSession';
 import type { ChargingSession as ChargingSessionType } from '../models/ChargingSession';
 
-// Mock the ChargingSessionManager
+// Mock the ChargingSessionManager with singleton pattern
+const mockStartSession = vi.fn();
+const mockGetSessionStatus = vi.fn();
+const mockStopSession = vi.fn();
+const mockCleanup = vi.fn();
+
 vi.mock('../services/ChargingSessionManager', () => {
   return {
-    ChargingSessionManager: vi.fn().mockImplementation(() => {
-      return {
-        startSession: vi.fn(),
-        getSessionStatus: vi.fn(),
-        stopSession: vi.fn(),
-        cleanup: vi.fn(),
-      };
-    }),
+    ChargingSessionManager: {
+      getInstance: vi.fn(() => ({
+        startSession: mockStartSession,
+        getSessionStatus: mockGetSessionStatus,
+        stopSession: mockStopSession,
+        cleanup: mockCleanup,
+      })),
+      resetInstance: vi.fn(),
+    },
   };
 });
 
@@ -37,15 +43,10 @@ describe('ChargingSession Component', () => {
     realTimeUpdates: [],
   };
 
-  let mockStartSession: ReturnType<typeof vi.fn>;
-  let mockGetSessionStatus: ReturnType<typeof vi.fn>;
-  let mockStopSession: ReturnType<typeof vi.fn>;
-  let mockCleanup: ReturnType<typeof vi.fn>;
-
   beforeEach(async () => {
-    mockStartSession = vi.fn().mockResolvedValue(mockSession);
-    mockGetSessionStatus = vi.fn().mockResolvedValue(mockSession);
-    mockStopSession = vi.fn().mockResolvedValue({
+    mockStartSession.mockClear().mockResolvedValue(mockSession);
+    mockGetSessionStatus.mockClear().mockResolvedValue(mockSession);
+    mockStopSession.mockClear().mockResolvedValue({
       sessionId: 'session-abc-123',
       stationName: 'Downtown EV Charging Hub',
       slotNumber: 'A1',
@@ -59,15 +60,7 @@ describe('ChargingSession Component', () => {
       fees: 1.0,
       totalAmount: 3.01,
     });
-    mockCleanup = vi.fn();
-
-    const ChargingSessionManagerModule = await import('../services/ChargingSessionManager');
-    vi.mocked(ChargingSessionManagerModule.ChargingSessionManager).mockImplementation(() => ({
-      startSession: mockStartSession,
-      getSessionStatus: mockGetSessionStatus,
-      stopSession: mockStopSession,
-      cleanup: mockCleanup,
-    } as any));
+    mockCleanup.mockClear();
   });
 
   afterEach(() => {
@@ -374,12 +367,13 @@ describe('ChargingSession Component', () => {
   });
 
   describe('Cleanup', () => {
-    it('should call cleanup on unmount', () => {
+    it('should not call cleanup on unmount (singleton persists)', () => {
       const { unmount } = render(<ChargingSession {...mockProps} />);
 
       unmount();
 
-      expect(mockCleanup).toHaveBeenCalled();
+      // Singleton manager should NOT be cleaned up on component unmount
+      expect(mockCleanup).not.toHaveBeenCalled();
     });
   });
 

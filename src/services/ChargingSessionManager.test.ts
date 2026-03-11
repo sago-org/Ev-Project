@@ -5,7 +5,9 @@ describe('ChargingSessionManager', () => {
   let manager: ChargingSessionManager;
 
   beforeEach(() => {
-    manager = new ChargingSessionManager();
+    // Reset singleton before each test
+    ChargingSessionManager.resetInstance();
+    manager = ChargingSessionManager.getInstance();
     // Mock fetch globally
     global.fetch = vi.fn();
   });

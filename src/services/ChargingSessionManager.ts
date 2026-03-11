@@ -3,11 +3,38 @@ import type { ChargingSession, ChargingSessionSummary } from '../models';
 /**
  * Service for managing charging session lifecycle
  * Handles session creation, tracking, termination, and cost calculation
+ * Singleton pattern to ensure session persistence across component re-renders
  */
 export class ChargingSessionManager {
+  private static instance: ChargingSessionManager | null = null;
   private activeSessions: Map<string, ChargingSession> = new Map();
   private sessionTimers: Map<string, number> = new Map();
   private readonly UPDATE_INTERVAL = 1000; // Update every second
+
+  /**
+   * Private constructor to enforce singleton pattern
+   */
+  private constructor() {}
+
+  /**
+   * Get the singleton instance of ChargingSessionManager
+   */
+  public static getInstance(): ChargingSessionManager {
+    if (!ChargingSessionManager.instance) {
+      ChargingSessionManager.instance = new ChargingSessionManager();
+    }
+    return ChargingSessionManager.instance;
+  }
+
+  /**
+   * Reset the singleton instance (for testing purposes)
+   */
+  public static resetInstance(): void {
+    if (ChargingSessionManager.instance) {
+      ChargingSessionManager.instance.cleanup();
+      ChargingSessionManager.instance = null;
+    }
+  }
 
   /**
    * Start a new charging session

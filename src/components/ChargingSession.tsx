@@ -27,7 +27,7 @@ export function ChargingSession({
   onSessionComplete,
   onBack,
 }: ChargingSessionProps) {
-  const [sessionManager] = useState(() => new ChargingSessionManager());
+  const sessionManager = ChargingSessionManager.getInstance();
   const [session, setSession] = useState<ChargingSessionType | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
@@ -115,9 +115,10 @@ export function ChargingSession({
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      sessionManager.cleanup();
+      // Don't cleanup the singleton manager on unmount
+      // It needs to persist across navigation
     };
-  }, [sessionManager]);
+  }, []);
 
   // Render initial state (before session started)
   if (!session) {

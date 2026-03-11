@@ -13,7 +13,7 @@ export function ChargingSessionPageWrapper() {
   const handleSessionComplete = async (sessionId: string) => {
     try {
       // Get the session summary
-      const sessionManager = new ChargingSessionManager();
+      const sessionManager = ChargingSessionManager.getInstance();
       const summary = await sessionManager.stopSession(sessionId);
       setSessionSummary(summary);
       navigate('/summary');
