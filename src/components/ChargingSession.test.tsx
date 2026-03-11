@@ -291,7 +291,7 @@ describe('ChargingSession Component', () => {
       });
 
       await waitFor(() => {
-        expect(mockOnSessionComplete).toHaveBeenCalledWith('session-abc-123');
+        expect(mockOnSessionComplete).toHaveBeenCalledWith('session-abc-123', expect.any(Object));
       });
     });
   });

@@ -8,7 +8,7 @@ interface ChargingSessionProps {
   stationName: string;
   slotNumber: string;
   userId: string;
-  onSessionComplete?: (sessionId: string) => void;
+  onSessionComplete?: (sessionId: string, summary?: import('../models').ChargingSessionSummary) => void;
   onBack?: () => void;
 }
 
@@ -75,8 +75,8 @@ export function ChargingSession({
     setError(null);
 
     try {
-      await sessionManager.stopSession(session.sessionId);
-      onSessionComplete?.(session.sessionId);
+      const summary = await sessionManager.stopSession(session.sessionId);
+      onSessionComplete?.(session.sessionId, summary);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to stop charging session';

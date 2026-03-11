@@ -180,7 +180,7 @@ describe('LandingPage', () => {
   it('shows manual entry form when location permission is denied', async () => {
     // Mock geolocation API with permission denied error
     const mockGeolocation = {
-      getCurrentPosition: vi.fn((_success, error) => {
+      getCurrentPosition: vi.fn((_success: any, error: any) => {
         const geolocationError = {
           code: 1, // PERMISSION_DENIED
           message: 'User denied geolocation',

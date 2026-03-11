@@ -189,7 +189,7 @@ export class ChargingSessionManager {
     setTimeout(() => {
       this.activeSessions.delete(sessionId);
       this.saveSessionsToStorage();
-    }, 2000); // 2 second delay
+    }, 2000) as unknown as number; // 2 second delay
 
     // For demo: No backend persistence needed
     return summary;

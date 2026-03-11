@@ -92,7 +92,7 @@ export class ReceiptGeneratorService {
     doc.setFontSize(10);
     doc.text(`Payment Method: QR Code`, margin, yPosition);
     yPosition += 6;
-    doc.text(`Merchant ID: ${receiptData.paymentInfo.merchantId}`, margin, yPosition);
+    doc.text(`Merchant ID: ${receiptData.paymentInfo.merchantId || 'N/A'}`, margin, yPosition);
     
     // Generate PDF blob
     const pdfBlob = doc.output('blob');

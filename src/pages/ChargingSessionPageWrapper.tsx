@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ChargingSession } from '../components';
 import { useAppContext } from '../context/AppContext';
-import { ChargingSessionManager } from '../services/ChargingSessionManager';
 
 /**
  * Charging session page wrapper with routing integration
@@ -10,16 +9,11 @@ export function ChargingSessionPageWrapper() {
   const navigate = useNavigate();
   const { state, setSessionSummary } = useAppContext();
 
-  const handleSessionComplete = async (sessionId: string) => {
-    try {
-      // Get the session summary
-      const sessionManager = ChargingSessionManager.getInstance();
-      const summary = await sessionManager.stopSession(sessionId);
+  const handleSessionComplete = async (_sessionId: string, summary?: import('../models').ChargingSessionSummary) => {
+    if (summary) {
       setSessionSummary(summary);
-      navigate('/summary');
-    } catch (error) {
-      console.error('Failed to complete session:', error);
     }
+    navigate('/summary');
   };
 
   const handleBack = () => {
