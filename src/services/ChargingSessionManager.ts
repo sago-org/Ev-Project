@@ -246,7 +246,7 @@ export class ChargingSessionManager {
       }
     }, this.UPDATE_INTERVAL);
 
-    this.sessionTimers.set(sessionId, intervalId);
+    this.sessionTimers.set(sessionId, intervalId as unknown as number);
   }
 
   /**

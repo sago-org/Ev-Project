@@ -250,7 +250,7 @@ export class AvailabilityService {
 
     // Set up interval
     const intervalId = setInterval(poll, this.POLLING_INTERVAL);
-    this.pollingIntervals.set(stationId, intervalId);
+    this.pollingIntervals.set(stationId, intervalId as unknown as number);
   }
 
   /**

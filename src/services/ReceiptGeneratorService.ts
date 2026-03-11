@@ -83,12 +83,12 @@ export class ReceiptGeneratorService {
     
     // Total Amount (highlighted)
     doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.text(`Total Amount: ${receiptData.paymentInfo.currency} ${receiptData.sessionSummary.totalAmount.toFixed(2)}`, margin, yPosition);
     yPosition += 15;
     
     // Payment Information
-    doc.setFont(undefined, 'normal');
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.text(`Payment Method: QR Code`, margin, yPosition);
     yPosition += 6;
