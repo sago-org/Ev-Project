@@ -157,9 +157,9 @@ describe('ChargingSessionManager', () => {
       // Stop once
       await manager.stopSession(session.sessionId);
 
-      // Try to stop again
+      // Try to stop again - should fail because session is no longer active
       await expect(manager.stopSession(session.sessionId)).rejects.toThrow(
-        'Session not found or already stopped'
+        /Cannot stop session with status: stopped|Session not found or already stopped/
       );
     });
 

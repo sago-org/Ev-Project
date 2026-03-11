@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChargingSessionManager } from '../services/ChargingSessionManager';
 import type { ChargingSession as ChargingSessionType } from '../models/ChargingSession';
 import './ChargingSession.css';
@@ -32,6 +32,7 @@ export function ChargingSession({
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isStoppingRef = useRef(false); // Track if we're in the process of stopping
 
   // Format elapsed time as HH:MM:SS
   const formatElapsedTime = (seconds: number): string => {
@@ -70,6 +71,7 @@ export function ChargingSession({
     if (!session) return;
 
     setIsStopping(true);
+    isStoppingRef.current = true; // Mark that we're stopping
     setError(null);
 
     try {
@@ -80,6 +82,7 @@ export function ChargingSession({
         err instanceof Error ? err.message : 'Failed to stop charging session';
       setError(errorMessage);
       setIsStopping(false);
+      isStoppingRef.current = false;
     }
   }, [session, sessionManager, onSessionComplete]);
 
@@ -90,6 +93,12 @@ export function ChargingSession({
     }
 
     const updateInterval = setInterval(async () => {
+      // Don't poll if we're in the process of stopping
+      if (isStoppingRef.current) {
+        clearInterval(updateInterval);
+        return;
+      }
+
       try {
         const updatedSession = await sessionManager.getSessionStatus(
           session.sessionId
@@ -101,8 +110,7 @@ export function ChargingSession({
           clearInterval(updateInterval);
         }
       } catch (err) {
-        // Session might have been stopped, clear interval and continue
-        console.error('Failed to update session status:', err);
+        // Session might have been stopped or deleted, clear interval silently
         clearInterval(updateInterval);
       }
     }, 1000); // Update every second

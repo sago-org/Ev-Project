@@ -181,11 +181,15 @@ export class ChargingSessionManager {
       totalAmount,
     };
 
-    // Remove from active sessions LAST to allow any pending getSessionStatus calls to complete
-    this.activeSessions.delete(sessionId);
-
-    // Persist to storage
+    // Keep the stopped session in memory for a short time to allow polling to see the status change
+    // This prevents race conditions where polling tries to access a deleted session
     this.saveSessionsToStorage();
+
+    // Remove from active sessions after a delay to allow any pending getSessionStatus calls to complete
+    setTimeout(() => {
+      this.activeSessions.delete(sessionId);
+      this.saveSessionsToStorage();
+    }, 2000); // 2 second delay
 
     // For demo: No backend persistence needed
     return summary;
@@ -274,7 +278,7 @@ export class ChargingSessionManager {
    * Generate a unique session ID
    */
   private generateSessionId(): string {
-    return `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `session-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**
